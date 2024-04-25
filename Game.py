@@ -3,6 +3,7 @@ import Menu
 from LinkedList import LinkedList
 from Board import Board
 
+
 class Game:
     def __init__(self, board):
         self.board = board
@@ -10,7 +11,6 @@ class Game:
         self.enemy_pos = None
         self.walls_pos = None
         self.special_ability = None
-
 
 
     def add_player(self):
@@ -25,7 +25,7 @@ class Game:
         Asigna la posición inicial de los enemigos
         """
         self.enemy_pos = self.board.enemies_initial_positions()
-        
+
         
     def add_walls(self):
         """
@@ -40,6 +40,7 @@ class Game:
         """
         self.special_pos = self.board.special_initial_positions()
 
+
     def reset_game(self):
         """
         Reinicia el juego para comenzar una nueva partida.
@@ -53,7 +54,6 @@ class Game:
         # Añade el jugador, enemigos y muros al nuevo mapa
         self.board.player_initial_position()
         self.board.enemies_initial_positions()
-
 
 
     def check_enemy_collision(self):
@@ -84,37 +84,37 @@ class Game:
         else:
             print('Direccion invalida, intenta de nuevo')
             self.move_player()
-
         if self.board.valid_position(new_row, new_col): # Verifica si la nueva posición (new_row, new_col) está dentro de los límites del tablero
             node_value = self.board.get_cell_value(new_row, new_col)
 
             # Si la celda a la que va a saltar es una celda con pared
-            if node_value == '⬜':
+            if node_value == '⛔':
                 print("!Auch¡ parece que en esta direccion hay un muro")
                 return
 
             # Si la direccion a la que va a saltar esta un enemigo
-            if node_value == '👽':
+            if node_value == '🧟':
                 print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
                 self.lose_game()
 
             #Si la direccion a la que va a saltar, hay una caja de poderes especiales
             if node_value == '📦':
                 self.board.set_cell(*self.player_pos, '🟩')
-                self.board.set_cell(new_row, new_col, '🤖')
+                self.board.set_cell(new_row, new_col, '🕺')
                 print("¡Has obtenido un poder especial!")
                 self.obtain_special_ability()
 
 
             else:
                 self.board.set_cell(*self.player_pos, '🟩')
-                self.board.set_cell(new_row, new_col, '🤖')
+                self.board.set_cell(new_row, new_col, '🕺')
             self.player_pos = (new_row, new_col)
             return
 
         else:
             print()
             print("!Cuidado¡ te puedes caer del mapa")
+
 
     def obtain_special_ability(self):
         """
@@ -131,6 +131,7 @@ class Game:
             print("¡Has obtenido la habilidad de colocar más bombas en tus turnos!")
         else:
             print("¡Has obtenido la habilidad de aumentar el alcance de tus bombas a 3 casillas por lado!")
+
 
     def explode_bomb(self, row, col):
         """
@@ -159,7 +160,8 @@ class Game:
             pos_row, pos_col = pos
             if self.board.valid_position(pos_row, pos_col):
                 cell_value = self.board.get_cell_value(pos_row, pos_col)
-                if cell_value == '👽' or cell_value == '⬜':  # Si hay un enemigo o una pared adyacente, los elimina
+                if (cell_value == '🧟' or cell_value == '⛔'):
+                    # Si hay un enemigo o una pared adyacente, los elimina
                     self.board.set_cell(pos_row, pos_col, '🟩')  # Reemplaza la celda por un espacio vacío
 
         self.board.set_cell(row, col, '🟩')
@@ -198,7 +200,7 @@ class Game:
             node_value = self.board.get_cell_value(new_row, new_col)
 
             # Si la celda a la que va a saltar es una celda con pared
-            if node_value == '⬜' or node_value == '👽':
+            if node_value == '⛔' or node_value == '🧟':
                 self.explode_bomb(new_row, new_col)  # Hace explotar la bomba y elimina enemigos y paredes adyacentes
                 print("!Boom! La bomba ha explotado")
 
@@ -214,7 +216,6 @@ class Game:
                 self.drop_bomb(x + 1)
 
 
-
     def clear_board(self):
         """
         Borra completamente el mapa estableciendo el valor de cada celda como vacío.
@@ -228,9 +229,8 @@ class Game:
             for col in range(13):
                 self.board.set_cell(row, col, '🟩')
 
+
     def lose_game(self):
         self.clear_board()
         Menu.menu_bomberman()
         return
-
-

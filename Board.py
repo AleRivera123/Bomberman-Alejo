@@ -119,7 +119,7 @@ class Board:
         """
         row = 0
         col = 0
-        player_symbol = '🤖'
+        player_symbol = '🕺'
 
         self.set_cell(row, col, player_symbol)
         return row, col
@@ -138,7 +138,7 @@ class Board:
                 row = random.randint(0, self.n - 1)
                 col = random.randint(0, self.n - 1)
                 cell_value = self.get_cell_value(row, col)
-                if cell_value is None or cell_value == '🟩' or cell_value == '👽' or cell_value == '⬜':
+                if cell_value is None or cell_value == '🟩' or cell_value == '🧟' or cell_value == '⛔':
                     self.set_cell(row, col, special_symbol)
                     break
             self.special_initial_positions(num_special, x + 1)
@@ -147,14 +147,14 @@ class Board:
         """
         Estable las posiciones inciales de los enemigos en el tablero de forma aleatoria
         """
-        enemy_symbol = '👽'
+        enemy_symbol = '🧟'
         
         if x == num_enemies:
             return
         else:
             row = random.randint(0, self.n - 1)
             col = random.randint(1, self.n - 1)
-            if self.get_cell_value(row, col) != '🤖' and '👽' and '📦' :  # Verificar si la casilla no contiene el jugador
+            if self.get_cell_value(row, col) != '🕺' and '🧟' and '📦' :  # Verificar si la casilla no contiene el jugador
                 self.set_cell(row, col, enemy_symbol)
             self.enemies_initial_positions(num_enemies, x + 1)
                 
@@ -163,14 +163,14 @@ class Board:
         """
         Establece la posiciones de los muros de la tablero
         """
-        wall_symbol = '⬜'
+        wall_symbol = '⛔'
         
         if x == num_walls:
             return
         else:
             row = random.randint(0, self.n - 1)
             col = random.randint(0, self.n - 1)
-            if self.get_cell_value(row, col) != '🤖' and '👽' and '📦':  # Verificar si la casilla no contiene el jugador o los enemigos
+            if self.get_cell_value(row, col) != '🕺' and '🧟' and '📦':  # Verificar si la casilla no contiene el jugador o los enemigos
                 self.set_cell(row, col, wall_symbol)
             self.walls_positions(num_walls, x + 1)
 
@@ -180,3 +180,4 @@ class Board:
         """
         cell_value = self.board.get_cell_value(row, col)
         return cell_value is None or cell_value == '🟩'
+

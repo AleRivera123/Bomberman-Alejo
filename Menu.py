@@ -68,6 +68,7 @@ def game_loop():
             print("Opción inválida")
         game_turns()
 
+
         if game.check_enemy_collision():
             break
 
