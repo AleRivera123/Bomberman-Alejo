@@ -1,6 +1,7 @@
 import random
+import Menu
 from LinkedList import LinkedList
-import Board
+from Board import Board
 
 class Game:
     def __init__(self, board):
@@ -30,6 +31,7 @@ class Game:
         """
         self.walls_pos = self.board.walls_positions()
 
+
     def reset_game(self):
         """
         Reinicia el juego para comenzar una nueva partida.
@@ -37,16 +39,23 @@ class Game:
         # Restablecer la posición del jugador
         self.board.set_cell(*self.player_pos, '🟩')
 
-        self.player_pos = self.board.player_initial_position()
+        # Reinicia el mapa
+        self.board = Board(13)
 
-        # Restablecer la posición de los enemigos
-        self.enemy_pos = self.board.enemies_initial_positions()
+        # Añade el jugador, enemigos y muros al nuevo mapa
+        self.board.player_initial_position()
+        self.board.enemies_initial_positions()
+
+
 
     def check_enemy_collision(self):
         """
-        Verifica si el jugador está en la misma posición que un enemigo, si es así, el jugador pierde.
+        Verifica si el jugador ha chocado con un enemigo.
+        Si es así, reinicia el juego.
         """
         if self.player_pos == self.enemy_pos:
+            print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
+            self.reset_game()
             return True
         return False
 
@@ -80,7 +89,7 @@ class Game:
             # Si la direccion a la que va a saltar esta un enemigo
             if node_value == '👽':
                 print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
-                self.reset_game()
+                self.lose_game()
 
             else:
                 self.board.set_cell(*self.player_pos, '🟩')
@@ -135,3 +144,17 @@ class Game:
                 self.board.explode_bomb(new_row,new_col)
 
             return
+
+
+    def clear_board(self):
+        """
+        Borra completamente el mapa estableciendo el valor de cada celda como vacío.
+        """
+        for row in range(13):
+            for col in range(13):
+                self.board.set_cell(row, col, '🟩')
+
+    def lose_game(self):
+        self.clear_board()
+        Menu.menu_bomberman()
+        return

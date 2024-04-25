@@ -61,10 +61,14 @@ def game_loop():
             game.drop_bomb()
         elif choice == "6":
             print("Saliendo del juego...")
-            break  # Salir del bucle principal y del juego
+            game.reset_game()
+            break
         else:
             print("Opción inválida")
         game_turns()
+
+        if game.check_enemy_collision():
+            break
 
 
 def game_turns():

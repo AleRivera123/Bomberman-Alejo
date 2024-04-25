@@ -94,8 +94,8 @@ class Board:
             curr_node = curr_node.next
 
         curr_node.value = value # Establece el valor del nodo actual por el valor requerido
-        
-        
+
+
     def get_cell_value(self, row, col):
         """
         Obtiene el valor de la celda en la posicion dada
