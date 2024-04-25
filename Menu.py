@@ -24,6 +24,7 @@ def menu_bomberman():
             game.add_player()
             game.add_enemies()
             game.add_walls()
+            game.add_special_skills()
             game_turns()
             game_loop()
 

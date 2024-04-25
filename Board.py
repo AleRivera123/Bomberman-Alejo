@@ -125,6 +125,24 @@ class Board:
         return row, col
 
 
+    def special_initial_positions(self, num_special = 2, x=0):
+        """
+        Agrega dos habilidades especiales aleatorias al tablero.
+        """
+        special_symbol = '📦'
+
+        if x == num_special:
+            return
+        else:
+            while True:
+                row = random.randint(0, self.n - 1)
+                col = random.randint(0, self.n - 1)
+                cell_value = self.get_cell_value(row, col)
+                if cell_value is None or cell_value == '🟩' or cell_value == '👽' or cell_value == '⬜':
+                    self.set_cell(row, col, special_symbol)
+                    break
+            self.special_initial_positions(num_special, x + 1)
+
     def enemies_initial_positions(self, num_enemies = random.randint(8, 13), x = 0):
         """
         Estable las posiciones inciales de los enemigos en el tablero de forma aleatoria
@@ -136,7 +154,7 @@ class Board:
         else:
             row = random.randint(0, self.n - 1)
             col = random.randint(1, self.n - 1)
-            if self.get_cell_value(row, col) != '🤖' and '👽':  # Verificar si la casilla no contiene el jugador
+            if self.get_cell_value(row, col) != '🤖' and '👽' and '📦' :  # Verificar si la casilla no contiene el jugador
                 self.set_cell(row, col, enemy_symbol)
             self.enemies_initial_positions(num_enemies, x + 1)
                 
@@ -152,7 +170,7 @@ class Board:
         else:
             row = random.randint(0, self.n - 1)
             col = random.randint(0, self.n - 1)
-            if self.get_cell_value(row, col) != '🤖' and '👽':  # Verificar si la casilla no contiene el jugador o los enemigos
+            if self.get_cell_value(row, col) != '🤖' and '👽' and '📦':  # Verificar si la casilla no contiene el jugador o los enemigos
                 self.set_cell(row, col, wall_symbol)
             self.walls_positions(num_walls, x + 1)
 
@@ -162,22 +180,3 @@ class Board:
         """
         cell_value = self.board.get_cell_value(row, col)
         return cell_value is None or cell_value == '🟩'
-
-    def explode_bomb(self, row, col):
-        """
-        Hace explotar la bomba en la posición especificada y elimina los enemigos y paredes adyacentes.
-        """
-        # Define las posiciones adyacentes a la explosión
-        adjacent_positions = [
-            (row - 1, col), (row + 1, col),  # Arriba y abajo
-            (row, col - 1), (row, col + 1)  # Izquierda y derecha
-        ]
-
-        for pos in adjacent_positions:
-            pos_row, pos_col = pos
-            if self.valid_position(pos_row, pos_col):
-                cell_value = self.get_cell_value(pos_row, pos_col)
-                if cell_value == '👽' or cell_value == '⬜':  # Si hay un enemigo o una pared adyacente, los elimina
-                    self.set_cell(pos_row, pos_col, '🟩')  # Reemplaza la celda por un espacio vacío
-
-        self.set_cell(row, col, '🟩')

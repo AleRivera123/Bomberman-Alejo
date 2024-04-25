@@ -9,6 +9,8 @@ class Game:
         self.player_pos = None
         self.enemy_pos = None
         self.walls_pos = None
+        self.special_ability = None
+
 
 
     def add_player(self):
@@ -22,7 +24,7 @@ class Game:
         """
         Asigna la posición inicial de los enemigos
         """
-        self.black_pos = self.board.enemies_initial_positions()
+        self.enemy_pos = self.board.enemies_initial_positions()
         
         
     def add_walls(self):
@@ -31,6 +33,12 @@ class Game:
         """
         self.walls_pos = self.board.walls_positions()
 
+
+    def add_special_skills(self):
+        """
+        Asigna la posicion inicial de las cajas
+        """
+        self.special_pos = self.board.special_initial_positions()
 
     def reset_game(self):
         """
@@ -50,8 +58,7 @@ class Game:
 
     def check_enemy_collision(self):
         """
-        Verifica si el jugador ha chocado con un enemigo.
-        Si es así, reinicia el juego.
+        Verifica si el jugador ha chocado con un enemigo, si es así, reinicia el juego.
         """
         if self.player_pos == self.enemy_pos:
             print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
@@ -91,6 +98,14 @@ class Game:
                 print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
                 self.lose_game()
 
+            #Si la direccion a la que va a saltar, hay una caja de poderes especiales
+            if node_value == '📦':
+                self.board.set_cell(*self.player_pos, '🟩')
+                self.board.set_cell(new_row, new_col, '🤖')
+                print("¡Has obtenido un poder especial!")
+                self.obtain_special_ability()
+
+
             else:
                 self.board.set_cell(*self.player_pos, '🟩')
                 self.board.set_cell(new_row, new_col, '🤖')
@@ -101,11 +116,60 @@ class Game:
             print()
             print("!Cuidado¡ te puedes caer del mapa")
 
+    def obtain_special_ability(self):
+        """
+        Selecciona una habilidad especial al azar y la asigna al jugador.
+        """
+        if self.special_ability is not None:
+            print("Ya tiene una habilidad especial")
+            return
 
-    def drop_bomb(self):
+        special_abilities = ["Más bombas", "Mayor alcance de bombas"]
+        self.special_ability = random.choice(special_abilities)
+
+        if self.special_ability == "Más bombas":
+            print("¡Has obtenido la habilidad de colocar más bombas en tus turnos!")
+        else:
+            print("¡Has obtenido la habilidad de aumentar el alcance de tus bombas a 3 casillas por lado!")
+
+    def explode_bomb(self, row, col):
+        """
+        Hace explotar la bomba en la posición especificada y elimina los enemigos y paredes adyacentes.
+        """
+
+        # Define las posiciones adyacentes a la explosión segun si tiene habilidad o no
+        if self.special_ability == "Mayor alcance de bombas":
+            adjacent_positions = [
+                (row - 1, col), (row + 1, col),  # Arriba y abajo
+                (row, col - 1), (row, col + 1),  # Izquierda y derecha
+                (row - 2, col), (row + 2, col),  # Dos casillas arriba y dos casillas abajo
+                (row, col - 2), (row, col + 2)  # Dos casillas a la izquierda y dos casillas a la derecha
+            ]
+        else:
+            adjacent_positions = [
+                # Arriba y abajo
+                (row - 1, col),
+                (row + 1, col),
+                # Izquierda y derecha
+                (row, col - 1),
+                (row, col + 1)
+            ]
+
+        for pos in adjacent_positions:
+            pos_row, pos_col = pos
+            if self.board.valid_position(pos_row, pos_col):
+                cell_value = self.board.get_cell_value(pos_row, pos_col)
+                if cell_value == '👽' or cell_value == '⬜':  # Si hay un enemigo o una pared adyacente, los elimina
+                    self.board.set_cell(pos_row, pos_col, '🟩')  # Reemplaza la celda por un espacio vacío
+
+        self.board.set_cell(row, col, '🟩')
+
+
+    def drop_bomb(self,x=0):
         """
         Permitira ubicar las bombas, y hacer las explosion de estas
         """
+
         direction = int(input(
             """
             Directions
@@ -135,21 +199,31 @@ class Game:
 
             # Si la celda a la que va a saltar es una celda con pared
             if node_value == '⬜' or node_value == '👽':
-                self.board.explode_bomb(new_row, new_col)  # Hace explotar la bomba y elimina enemigos y paredes adyacentes
+                self.explode_bomb(new_row, new_col)  # Hace explotar la bomba y elimina enemigos y paredes adyacentes
                 print("!Boom! La bomba ha explotado")
-                return
 
             else:
                 self.board.set_cell(new_row, new_col, '💣')# Coloca la bomba en la nueva posición
-                self.board.explode_bomb(new_row,new_col)
+                self.explode_bomb(new_row,new_col)
 
-            return
+        if self.special_ability == "Más bombas":
+
+            if x == 1:
+                return
+            else:
+                self.drop_bomb(x + 1)
+
 
 
     def clear_board(self):
         """
         Borra completamente el mapa estableciendo el valor de cada celda como vacío.
         """
+        self.player_pos = None
+        self.enemy_pos = None
+        self.walls_pos = None
+        self.special_ability = None
+
         for row in range(13):
             for col in range(13):
                 self.board.set_cell(row, col, '🟩')
@@ -158,3 +232,5 @@ class Game:
         self.clear_board()
         Menu.menu_bomberman()
         return
+
+
