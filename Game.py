@@ -231,6 +231,20 @@ class Game:
 
 
     def lose_game(self):
+        """
+        Limpia el tablero y muestra el menú del juego Bomberman cuando el jugador pierde.
+        """
+
         self.clear_board()
         Menu.menu_bomberman()
         return
+
+
+    def win_game(self):
+        """
+        Analiza cuando el jugador a ganado usando la funcion find enemies
+        """
+        if self.board.find_enemies():
+            print("¡Haz Ganado el juego Felicitaciones!")
+            self.clear_board()
+            Menu.menu_bomberman()

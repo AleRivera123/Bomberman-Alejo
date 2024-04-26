@@ -1,5 +1,4 @@
 import sys
-import random
 from Board import Board
 from Game import Game
 
@@ -29,9 +28,11 @@ def menu_bomberman():
             game_loop()
 
         elif option == 2:
+            game.reset_game()
+            sys.exit()
             break
 
-        else:
+    else:
             print('Invalid option, try again')
             continue
 
@@ -63,10 +64,12 @@ def game_loop():
         elif choice == "6":
             print("Saliendo del juego...")
             game.reset_game()
+            sys.exit()
             break
         else:
             print("Opción inválida")
         game_turns()
+        game.win_game()
 
 
         if game.check_enemy_collision():

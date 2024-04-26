@@ -181,3 +181,20 @@ class Board:
         cell_value = self.board.get_cell_value(row, col)
         return cell_value is None or cell_value == '🟩'
 
+    def find_enemies(self):
+        """
+        Busca enemigos en el tablero, retorna False si encuentra al menos un enemigo, True si no encuentra ninguno.
+        """
+        curr_row = self.board.head
+
+        while curr_row:  # Itera a través de las filas del tablero
+            curr_node = curr_row.value.head
+
+            while curr_node:  # Itera a través de los nodos de cada fila
+                if curr_node.value == '🧟':  # Si encuentra un enemigo, retorna False
+                    return False
+                curr_node = curr_node.next
+
+            curr_row = curr_row.next
+
+        return True
