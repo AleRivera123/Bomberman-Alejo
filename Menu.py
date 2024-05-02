@@ -32,7 +32,7 @@ def menu_bomberman():
             sys.exit()
             break
 
-    else:
+        else:
             print('Invalid option, try again')
             continue
 
@@ -70,7 +70,7 @@ def game_loop():
             print("Opción inválida")
         game_turns()
         game.win_game()
-
+        game.move_enemies()
 
         if game.check_enemy_collision():
             break

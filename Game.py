@@ -12,13 +12,11 @@ class Game:
         self.walls_pos = None
         self.special_ability = None
 
-
     def add_player(self):
         """
         Asignar la posición inicial del jugador 
         """
         self.player_pos = self.board.player_initial_position()
-
 
     def add_enemies(self):
         """
@@ -26,20 +24,17 @@ class Game:
         """
         self.enemy_pos = self.board.enemies_initial_positions()
 
-        
     def add_walls(self):
         """
         Asigna la posición inicial de los muros
         """
         self.walls_pos = self.board.walls_positions()
 
-
     def add_special_skills(self):
         """
         Asigna la posicion inicial de las cajas
         """
         self.special_pos = self.board.special_initial_positions()
-
 
     def reset_game(self):
         """
@@ -55,7 +50,6 @@ class Game:
         self.board.player_initial_position()
         self.board.enemies_initial_positions()
 
-
     def check_enemy_collision(self):
         """
         Verifica si el jugador ha chocado con un enemigo, si es así, reinicia el juego.
@@ -65,7 +59,6 @@ class Game:
             self.reset_game()
             return True
         return False
-
 
     def move_player(self, direction):
         """
@@ -84,7 +77,7 @@ class Game:
         else:
             print('Direccion invalida, intenta de nuevo')
             self.move_player()
-        if self.board.valid_position(new_row, new_col): # Verifica si la nueva posición (new_row, new_col) está dentro de los límites del tablero
+        if self.board.valid_position(new_row,new_col):  # Verifica si la nueva posición (new_row, new_col) está dentro de los límites del tablero
             node_value = self.board.get_cell_value(new_row, new_col)
 
             # Si la celda a la que va a saltar es una celda con pared
@@ -97,7 +90,7 @@ class Game:
                 print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
                 self.lose_game()
 
-            #Si la direccion a la que va a saltar, hay una caja de poderes especiales
+            # Si la direccion a la que va a saltar, hay una caja de poderes especiales
             if node_value == '📦':
                 self.board.set_cell(*self.player_pos, '🟩')
                 self.board.set_cell(new_row, new_col, '🕺')
@@ -115,7 +108,6 @@ class Game:
             print()
             print("!Cuidado¡ te puedes caer del mapa")
 
-
     def obtain_special_ability(self):
         """
         Selecciona una habilidad especial al azar y la asigna al jugador.
@@ -131,7 +123,6 @@ class Game:
             print("¡Has obtenido la habilidad de colocar más bombas en tus turnos!")
         else:
             print("¡Has obtenido la habilidad de aumentar el alcance de tus bombas a 3 casillas por lado!")
-
 
     def explode_bomb(self, row, col):
         """
@@ -166,8 +157,7 @@ class Game:
 
         self.board.set_cell(row, col, '🟩')
 
-
-    def drop_bomb(self,x=0):
+    def drop_bomb(self, x=0):
         """
         Permitira ubicar las bombas, y hacer las explosion de estas
         """
@@ -196,7 +186,8 @@ class Game:
             print('Invalid direction, try again')
             self.drop_bomb()
 
-        if self.board.valid_position(new_row, new_col):  # Verifica si la nueva posición (new_row, new_col) está dentro de los límites del tablero
+        if self.board.valid_position(new_row,
+                                     new_col):  # Verifica si la nueva posición (new_row, new_col) está dentro de los límites del tablero
             node_value = self.board.get_cell_value(new_row, new_col)
 
             # Si la celda a la que va a saltar es una celda con pared
@@ -205,8 +196,8 @@ class Game:
                 print("!Boom! La bomba ha explotado")
 
             else:
-                self.board.set_cell(new_row, new_col, '💣')# Coloca la bomba en la nueva posición
-                self.explode_bomb(new_row,new_col)
+                self.board.set_cell(new_row, new_col, '💣')  # Coloca la bomba en la nueva posición
+                self.explode_bomb(new_row, new_col)
 
         if self.special_ability == "Más bombas":
 
@@ -214,7 +205,6 @@ class Game:
                 return
             else:
                 self.drop_bomb(x + 1)
-
 
     def clear_board(self):
         """
@@ -229,7 +219,6 @@ class Game:
             for col in range(13):
                 self.board.set_cell(row, col, '🟩')
 
-
     def lose_game(self):
         """
         Limpia el tablero y muestra el menú del juego Bomberman cuando el jugador pierde.
@@ -239,7 +228,6 @@ class Game:
         Menu.menu_bomberman()
         return
 
-
     def win_game(self):
         """
         Analiza cuando el jugador a ganado usando la funcion find enemies
@@ -248,3 +236,49 @@ class Game:
             print("¡Haz Ganado el juego Felicitaciones!")
             self.clear_board()
             Menu.menu_bomberman()
+
+    def move_enemies(self):
+        """
+        Mueve aleatoriamente a los enemigos a una posición adyacente que no tenga un muro cerca.
+        """
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+        curr_row_node = self.board.board.head
+        row_index = 0
+
+        while curr_row_node:
+            if curr_row_node.value is not None:  # Verificar si la fila actual no está vacía
+                curr_col_node = curr_row_node.value.head
+                col_index = 0
+
+                while curr_col_node:
+                    if curr_col_node.value == '🧟':
+                        direction = random.choice(directions)
+                        new_row = row_index + direction[0]
+                        new_col = col_index + direction[1]
+
+                        # Verifica si la nueva posición es válida
+                        if self.board.valid_position(new_row, new_col):
+                            node_value = self.board.get_cell_value(new_row, new_col)
+
+                            # Si hay un muro o una caja en la nueva posición, elige otra dirección
+                            while node_value == '⛔' or node_value == '📦':
+                                direction = random.choice(directions)
+                                new_row = row_index + direction[0]
+                                new_col = col_index + direction[1]
+                                node_value = self.board.get_cell_value(new_row, new_col)
+
+                            # Realiza el movimiento del enemigo si la nueva posición es válida
+                            self.board.set_cell(new_row, new_col, '🧟')
+                            self.board.set_cell(row_index, col_index, '🟩')
+
+                            # Verifica si el jugador está en la misma posición que un enemigo
+                            if new_row == self.player_pos[0] and new_col == self.player_pos[1]:
+                                print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
+                                self.lose_game()
+
+                    curr_col_node = curr_col_node.next
+                    col_index += 1
+
+            curr_row_node = curr_row_node.next
+            row_index += 1
