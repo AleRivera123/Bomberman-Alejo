@@ -102,13 +102,25 @@ class Board:
         """
         curr_row = self.board.head
 
-        for row in range(row):
-            curr_row = curr_row.next # Pasar a la siguiente fila
+        # Avanzar hasta la fila especificada
+        for _ in range(row):
+            if curr_row is None:
+                return None  # La fila no existe
+            curr_row = curr_row.next
+
+        if curr_row is None or curr_row.value is None:
+            return None  # La fila no existe o está vacía
 
         curr_node = curr_row.value.head
-        
-        for col in range(col): # Avanzar hasta la columna especificada
+
+        # Avanzar hasta la columna especificada
+        for _ in range(col):
+            if curr_node is None:
+                return None  # La columna no existe
             curr_node = curr_node.next
+
+        if curr_node is None:
+            return None  # La columna no existe
 
         return curr_node.value
     
