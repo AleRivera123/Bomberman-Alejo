@@ -182,7 +182,7 @@ class Board:
         else:
             row = random.randint(0, self.n - 1)
             col = random.randint(0, self.n - 1)
-            if self.get_cell_value(row, col) != '🕺' and '🧟' and '📦':  # Verificar si la casilla no contiene el jugador o los enemigos
+            if self.get_cell_value(row, col) != '🕺' and '🧟' and '📦':  # Verificar si la casilla no contiene el jugador, habilidades especiales o los enemigos
                 self.set_cell(row, col, wall_symbol)
             self.walls_positions(num_walls, x + 1)
 
@@ -203,7 +203,8 @@ class Board:
             curr_node = curr_row.value.head
 
             while curr_node:  #
-                if curr_node.value == '🧟':
+                if curr_node.value == '🧟' or curr_node.value == '🧟‍♀️':
+
                     return False
                 curr_node = curr_node.next
 
@@ -211,48 +212,3 @@ class Board:
 
         return True
 
-    def prueba(self):
-        """
-        Mueve aleatoriamente a los enemigos a una posición adyacente que no tenga un muro cerca.
-        """
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-
-        curr_row_node = self.board.board.head
-        row_index = 0
-
-        while curr_row_node:
-            if curr_row_node.value is not None:  # Verificar si la fila actual no está vacía
-                curr_col_node = curr_row_node.value.head
-                col_index = 0
-
-                while curr_col_node:
-                    if curr_col_node.value == '🧟':
-                        direction = random.choice(directions)
-                        new_row = row_index + direction[0]
-                        new_col = col_index + direction[1]
-
-                        # Verifica si la nueva posición es válida
-                        if self.valid_position(new_row, new_col):
-                            node_value = self.get_cell_value(new_row, new_col)
-
-                            # Si hay un muro o una caja en la nueva posición, elige otra dirección
-                            while node_value == '⛔' or node_value == '📦':
-                                direction = random.choice(directions)
-                                new_row = row_index + direction[0]
-                                new_col = col_index + direction[1]
-                                node_value = self.get_cell_value(new_row, new_col)
-
-                            # Realiza el movimiento del enemigo si la nueva posición es válida
-                            self.set_cell(new_row, new_col, '🧟')
-                            self.set_cell(row_index, col_index, '🟩')
-
-                            # Verifica si el jugador está en la misma posición que un enemigo
-                            if new_row == self.player_pos[0] and new_col == self.player_pos[1]:
-                                print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
-                                self.game.lose_game()
-
-                    curr_col_node = curr_col_node.next
-                    col_index += 1
-
-            curr_row_node = curr_row_node.next
-            row_index += 1

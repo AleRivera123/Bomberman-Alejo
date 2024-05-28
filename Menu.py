@@ -47,7 +47,11 @@ def game_loop():
         print("3. Izquierda")
         print("4. Derecha")
         print ("5. Lanzar bomba")
-        print("6. Salir del juego")
+        print("6. Diagonal arriba izq")
+        print("7. Diagonal abajo izq")
+        print("8. Diagonal arriba1 der")
+        print("9. Diagonal abajo der")
+        print("0. Salir del juego")
 
         choice = input("Ingrese el número de la opción: ")
 
@@ -62,6 +66,14 @@ def game_loop():
         elif choice == "5":
             game.drop_bomb()
         elif choice == "6":
+            game.move_player(6)
+        elif choice == "7":
+            game.move_player(7)
+        elif choice == "8":
+            game.move_player(8)
+        elif choice == "9":
+            game.move_player(9)
+        elif choice == "0":
             print("Saliendo del juego...")
             game.reset_game()
             sys.exit()

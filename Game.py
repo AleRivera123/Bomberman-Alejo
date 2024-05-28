@@ -74,7 +74,20 @@ class Game:
             new_col -= 1
         elif direction == 4:  # Derecha
             new_col += 1
+        elif direction == 6: #Diagonal arriba izq
+            new_col -= 2
+            new_row -= 2
+        elif direction == 7: #Diagonal arriba der
+            new_col -= 2
+            new_row += 2
+        elif direction == 8: #Diagonal arriba der
+            new_col += 2
+            new_row -= 2
+        elif direction == 9: #Diagonal abajo izq
+            new_col += 2
+            new_row += 2
         else:
+
             print('Direccion invalida, intenta de nuevo')
             self.move_player()
 
@@ -87,7 +100,7 @@ class Game:
                 return
 
             # Si la direccion a la que va a saltar esta un enemigo
-            if node_value == '🧟':
+            if node_value == '🧟' or  node_value == '🧟‍♀️':
                 print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
                 self.lose_game()
 
@@ -151,7 +164,7 @@ class Game:
             pos_row, pos_col = pos
             if self.board.valid_position(pos_row, pos_col):
                 cell_value = self.board.get_cell_value(pos_row, pos_col)
-                if (cell_value == '🧟' or cell_value == '⛔'):
+                if (cell_value == '🧟' or cell_value == '⛔' or cell_value == '🧟‍♀️'):
                     # Si hay un enemigo o una pared adyacente, los elimina
                     self.board.set_cell(pos_row, pos_col, '🟩')  # Reemplaza la celda por un espacio vacío
 
@@ -190,7 +203,7 @@ class Game:
             node_value = self.board.get_cell_value(new_row, new_col)
 
             # Si la celda a la que va a saltar es una celda con pared
-            if node_value in ['⛔', '🧟']:
+            if node_value in ['⛔', '🧟','🧟‍♀️']:
                 self.explode_bomb(new_row, new_col)  # Hace explotar la bomba y elimina enemigos y paredes adyacentes
                 print("!Boom! La bomba ha explotado")
 
@@ -256,21 +269,57 @@ class Game:
                         if self.board.valid_position(new_row, new_col):
                             node_value = self.board.get_cell_value(new_row, new_col)
 
-                            while node_value is None or node_value in ['⛔', '📦', '🧟']:
+                            while node_value is None or node_value in ['📦', '🧟']:
                                 direction = random.choice(directions)
                                 new_row = row_index + direction[0]
                                 new_col = col_index + direction[1]
                                 node_value = self.board.get_cell_value(new_row, new_col)
 
                             if node_value is not None:
-                                self.board.set_cell(new_row, new_col, '🧟')
-                                self.board.set_cell(row_index, col_index, '🟩')
+                                if node_value == '⛔':
+                                    self.board.set_cell(new_row, new_col, '🧟‍♀️')
+                                    self.board.set_cell(row_index, col_index, '🟩')
+
+                                if node_value == '🟩':
+                                    self.board.set_cell(new_row, new_col, '🧟')
+                                    self.board.set_cell(row_index, col_index, '🟩')
+
+                                if new_row == self.player_pos[0] and new_col == self.player_pos[1]:
+                                    self.board.set_cell(new_row, new_col, '🧟')
+                                    self.board.set_cell(row_index, col_index, '🟩')
+                                    print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
+
+                                    self.lose_game()
+
+                    if curr_col_node.value == '🧟‍♀️':
+                        direction = random.choice(directions)
+                        new_row = row_index + direction[0]
+                        new_col = col_index + direction[1]
+
+                        if self.board.valid_position(new_row, new_col):
+                            node_value = self.board.get_cell_value(new_row, new_col)
+
+                            while node_value is None or node_value in ['📦', '🧟']:
+                                direction = random.choice(directions)
+                                new_row = row_index + direction[0]
+                                new_col = col_index + direction[1]
+                                node_value = self.board.get_cell_value(new_row, new_col)
+
+                            if node_value is not None:
+                                if node_value == '⛔':
+                                    self.board.set_cell(new_row, new_col, '🧟‍♀️')
+                                    self.board.set_cell(row_index, col_index, '⛔')
+
+                                if node_value == '🟩':
+                                    self.board.set_cell(new_row, new_col, '🧟')
+                                    self.board.set_cell(row_index, col_index, '⛔')
 
                                 if new_row == self.player_pos[0] and new_col == self.player_pos[1]:
                                     self.board.set_cell(new_row, new_col, '🧟')
                                     self.board.set_cell(row_index, col_index, '🟩')
                                     print("¡Oh no! ¡Un enemigo te ha atrapado! ¡El juego se reiniciará.")
                                     self.lose_game()
+
 
                     curr_col_node = curr_col_node.next
                     col_index += 1
